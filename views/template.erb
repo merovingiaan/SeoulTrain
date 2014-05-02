@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Seoul Subway Transports Realtime Information</title>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <style>
+  html, body {
+    font-size: 13px;
+  }
+  table {
+    border: 1px solid #111;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  table tr td {
+    border-bottom: 1px solid #111;
+  }
+  </style>
+</head>
+<body>
+<p>
+Line number:
+<a href="/transports/1">1(Dark blue)</a>
+<a href="/transports/2">2(Green)</a>
+<a href="/transports/3">3(Orange)</a>
+<a href="/transports/4">4(Blue)</a>
+<a href="/transports/5">5(Purple)</a>
+<a href="/transports/6">6(Ochre)</a>
+<a href="/transports/7">7(Olive)</a>
+<a href="/transports/8">8(Magenta)</a>
+<a href="/transports/9">9(Gold)</a>
+</p>
+<% if @number %>
+<p>
+  <% if @code == '0' %>
+    Subway station:
+    <ul class="station-list">
+        <li><a href="/transports/<%= @number %>">-</a></li>
+      <% @items.each do |item| %>
+        <li><a href="/transports/<%= @number %>/<%= item.at('statnId').text %>"><%= item.at('statnNm').text %></a></li>
+      <% end %>
+    </ul>
+    <select id="selector"></select>
+  <% elsif @code != '0' %>
+    Error: <%= @msg %>
+  <% end %>
+</p>
+<% end %>
+<% if @data and @code == '0' %>
+<div>
+  <h2><%= @data[:name] %></h2>
+  <table>
+    <tbody>
+      <tr>
+        <td><%= @data[:sideStation][:before] %> &laquo;</td>
+        <td><strong><%= @data[:name] %></strong></td>
+        <td>&laquo; <%= @data[:sideStation][:after] %></td>
+      </tr>
+      <% if @data[:content][:outerLine].size == 0 %>
+        <tr>
+          <td colspan="3">
+            도착예정 열차 없음 (No train)
+          </td>
+        </tr>
+      <% else %>
+        <% @data[:content][:outerLine].each_with_index do |data, index| %>
+          <tr>
+            <td colspan="3">
+              <% if index == 0 %>
+                <strong>이번열차(First train): <%= data[:trainAt] << '(' << data[:trainArrivalTime] << ')' %></strong><br>
+                <span><%= data[:trainLineName] %></span>
+              <% else %>
+                <strong>다음열차(Next train): <%= data[:trainAt] << '(' << data[:trainArrivalTime] << ')' %></strong><br>
+                <span><%= data[:trainLineName] %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end%>
+      <% end %>
+
+      <tr>
+        <td><%= @data[:sideStation][:before] %> &raquo;</td>
+        <td><strong><%= @data[:name] %></strong></td>
+        <td>&raquo; <%= @data[:sideStation][:after] %></td>
+      </tr>
+      <% if @data[:content][:innerLine].size == 0 %>
+        <tr>
+          <td colspan="3">
+            도착예정 열차 없음 (No train)
+          </td>
+        </tr>
+      <% else %>
+        <% @data[:content][:innerLine].each_with_index do |data, index| %>
+          <tr>
+            <td colspan="3">
+              <% if index == 0 %>
+                <strong>이번열차(First train): <%= data[:trainAt] << '(' << data[:trainArrivalTime] << ')' %></strong><br>
+                <span><%= data[:trainLineName] %></span>
+              <% else %>
+                <strong>다음열차(Next train): <%= data[:trainAt] << '(' << data[:trainArrivalTime] << ')' %></strong><br>
+                <span><%= data[:trainLineName] %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end%>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>
+
+<script>
+(function($) {
+  $(function() {
+    var $select = $('#selector');
+
+    if($select) {
+      $('li').each(function() {
+        var $li    = $(this),
+        $a     = $li.find('> a'),
+        $p     = $li.parents('li'),
+        prefix = new Array($p.length + 1).join('-');
+
+        var $option = $('<option>')
+        .text(prefix + ' ' + $a.text())
+        .val($a.attr('href'))
+        .appendTo($select);
+
+        if ($li.hasClass('current-page')) {
+          $option.attr('selected', 'selected');
+        }
+      });
+
+      $('ul').hide();
+      $select.change(function() {
+        location.href = $(this).val();
+      });
+    }
+  });
+})(jQuery);
+</script>
+</body>
+</html>
