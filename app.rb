@@ -8,9 +8,9 @@ require 'mechanize'
 TEMPLATE = :template
 set :views, File.dirname(__FILE__) + '/views'
 
-URL_LIST = "http://210.96.13.90/api/rest/subwayInfo/getStatnByRoute?subwayId=100%{id}"
-URL_STATION_INFO = "http://210.96.13.90/api/rest/subwayInfo/getStatnById?subwayId=100%{id}&statnId=%{station}"
-URL_STATION_ARRIVAL = "http://210.96.13.90/api/rest/subwayInfo/getArvlByInfo?subwayId=100%{id}&statnId=%{station}"
+URL_LIST = "http://210.96.13.90/api/rest/subwayInfo/getStatnByRoute?subwayId=100%{id}" unless defined?(URL_LIST)
+URL_STATION_INFO = "http://210.96.13.90/api/rest/subwayInfo/getStatnById?subwayId=100%{id}&statnId=%{station}" unless defined?(URL_STATION_INFO)
+URL_STATION_ARRIVAL = "http://210.96.13.90/api/rest/subwayInfo/getArvlByInfo?subwayId=100%{id}&statnId=%{station}" unless defined?(URL_STATION_ARRIVAL)
 
 agent = Mechanize.new
 agent.request_headers = {
