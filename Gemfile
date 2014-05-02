@@ -1,8 +1,10 @@
+ruby '2.0.0'
 source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'sinatra-reloader'
 gem 'mechanize'
+gem 'rake'
 
 group :test do
   gem 'rspec'
